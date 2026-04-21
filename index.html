@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>FxHash Explorer</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="site-header" id="site-header" style="display:none;">
+    <div class="logo" id="nav-home" style="cursor:pointer">FxHash Explorer</div>
+    <div class="search-group">
+      <input type="text" id="header-input-wallet" placeholder="wallet or username" spellcheck="false">
+      <button id="header-btn-search">Search</button>
+    </div>
+  </header>
+
+  <!-- LOADING OVERLAY -->
+  <div id="loading-overlay" class="modal hidden">
+    <div class="modal-content" style="text-align:center; max-width: 300px;">
+      <div class="spinner"></div>
+      <span id="loading-msg">Carregando...</span>
+    </div>
+  </div>
+
+  <main id="app">
+    <!-- HOME -->
+    <section id="view-home" class="view active" style="display:flex;flex-direction:column;align-items:center;justify-content:center;min-height:70vh;text-align:center;">
+       <div class="logo" style="font-size:36px;margin-bottom:40px;letter-spacing:2px;">FxHash Explorer</div>
+       <div class="search-group" style="margin-bottom:20px;">
+          <input type="text" id="home-input-wallet" placeholder="Enter wallet or username..." spellcheck="false" style="font-size:14px;padding:12px 20px;width:450px;text-align:center;text-transform:none;">
+          <button id="home-btn-search" style="font-size:14px;padding:12px 30px;background:var(--accent);color:var(--bg);font-weight:bold;">EXPLORE</button>
+       </div>
+       <div style="color:var(--text-dim);text-transform:uppercase;font-size:10px;">
+          Or try a quick load: <br>
+          <button class="quick-btn" data-val="tz1dWuBhVBcfSzDAuM7YsomUX8yw3RzwHDss" style="margin-top:15px;padding:8px 16px;">EDUXDUX</button>
+       </div>
+    </section>
+
+    <!-- GALLERY -->
+    <section id="view-gallery" class="view">
+      <div class="section-header" style="align-items:center;">
+         <h2 id="gallery-title">All Projects</h2>
+         <div class="meta" style="display:flex; gap:12px; align-items:center;">
+            <span id="gallery-count" style="margin-right:10px;">0 items</span>
+            <button id="btn-view-grid" style="padding:4px 8px; font-size:10px;">GRID</button>
+            <button id="btn-view-list" style="padding:4px 8px; font-size:10px;">LIST</button>
+            <button id="btn-select-all" style="margin-left:15px; padding:4px 8px; font-size:10px;">SELECT ALL</button>
+            <button id="btn-backup-selected" style="background:var(--text);color:var(--bg);margin-left:5px;" disabled>BACKUP SELECTED</button>
+         </div>
+      </div>
+      <div class="grid" id="gallery-grid"></div>
+    </section>
+
+    <!-- PROJECT -->
+    <section id="view-project" class="view">
+      <div class="section-header">
+         <h2><span id="btn-back" style="cursor:pointer;color:var(--text-dim);margin-right:15px;" title="Go back">←</span> <span id="project-name">Project</span></h2>
+         <div class="meta" id="project-supply">0 items</div>
+      </div>
+      
+      <div class="project-top">
+         <div class="project-cover" id="project-cover-wrap">
+            <img id="project-cover" src="" alt="">
+         </div>
+         <div class="project-details">
+            <p id="project-desc"></p>
+            <div id="project-stats" style="display:flex;gap:30px;font-size:11px;color:var(--text-dim);text-transform:uppercase;margin-bottom:30px;"></div>
+            <div class="project-actions">
+               <button id="btn-backup-project" style="background:var(--text);color:var(--bg);">BACKUP DO PROJETO</button>
+               <button id="btn-dl-source">DL SOURCE (.ZIP)</button>
+               <a id="btn-fx-link" href="#" target="_blank"><button>FXHASH ↗</button></a>
+            </div>
+         </div>
+      </div>
+
+      <div class="section-header" style="margin-top:70px;">
+         <h2>Grid View</h2>
+         <div class="search-group">
+            <input type="text" id="objkts-search" placeholder="Filter objkts...">
+         </div>
+      </div>
+      <div class="grid" id="objkts-grid"></div>
+      <div id="pagination" style="margin-top:50px;display:flex;justify-content:center;gap:10px;"></div>
+    </section>
+  </main>
+
+  <!-- SIDE PANEL (OBJKT DETALHADO) -->
+  <div class="panel-backdrop" id="panel-backdrop"></div>
+  <div class="panel" id="objkt-panel">
+     <button class="panel-close" id="panel-close">×</button>
+     <img class="panel-img" id="panel-img" src="" alt="">
+     <div style="font-size:16px;text-transform:uppercase;margin-bottom:30px;letter-spacing:1px;" id="panel-title">Title</div>
+     <div id="panel-info"></div>
+  </div>
+
+  <!-- BACKUP OPTIONS MODAL -->
+  <div class="modal hidden" id="backup-opts-modal">
+    <div class="modal-content">
+      <div class="modal-title">Configurar Backup</div>
+      <div class="checkbox-list">
+        <label><input type="checkbox" id="chk-imgs" checked> Imagens / Mídia em Alta Resolução</label>
+        <label><input type="checkbox" id="chk-src" checked> Código-fonte IPFS Clone (.zip)</label>
+        <label><input type="checkbox" id="chk-json" checked> Metadados e Features (.json)</label>
+        <label><input type="checkbox" id="chk-csv" checked> Tabela Consolidada (.csv)</label>
+      </div>
+      <div style="display:flex;justify-content:flex-end;gap:15px;margin-top:30px;">
+        <button id="btn-cancel-opts" style="border:none;">CANCEL</button>
+        <button id="btn-start-backup" style="background:var(--accent);color:var(--bg);border-color:var(--accent);">START ROUTINE</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- BACKUP PROGRESS MODAL -->
+  <div class="modal hidden" id="backup-prog-modal">
+    <div class="modal-content">
+      <div class="modal-title">Executando Rotina de Backup</div>
+      <div id="backup-status" style="font-size:11px;margin-bottom:15px;min-height:30px;text-transform:uppercase;line-height:1.6;">Aguardando início...</div>
+      <div class="progress-bar-wrap">
+         <div class="progress-bar" id="backup-bar"></div>
+      </div>
+      <div id="backup-extra-actions" style="display:flex; justify-content:center; gap: 10px; margin-top:20px;">
+          <button id="btn-force-finish" class="hidden" style="flex:1; border-color: orange; color: orange; font-size:11px; padding:8px;">FORÇAR CONCLUSÃO (.ZIP)</button>
+      </div>
+      <button id="btn-dl-backup" class="hidden" style="width:100%;background:var(--accent);color:var(--bg);padding:15px;margin-top:20px;font-size:14px;border-color:var(--accent);">DOWNLOAD ZIP</button>
+      <button id="btn-close-backup" class="hidden" style="width:100%;margin-top:15px;border:none;">FECHAR</button>
+    </div>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
